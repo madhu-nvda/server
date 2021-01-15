@@ -124,6 +124,33 @@ class GrpcFrontend(AbstractFrontend):
             return None
 
 
+class MLPerfFrontend():
+
+    @property
+    def filter_timestamp(self):
+        return "MLPerf Request START"
+
+    def add_frontend_span(self, span_map, timestamps):
+        if ("MLPerf Request START"
+                in timestamps) and ("MLPerf Request Response RECV"
+                                    in timestamps):
+            add_span(span_map, timestamps, "Harness Overhead time",
+                     "MLPerf Request START", "Called Infer Async")
+            add_span(span_map, timestamps, "Actual triton time",
+                     "Called Infer Async", "MLPerf Request Response RECV")
+
+    def summarize_frontend_span(self, span_map, cnt):
+        if "Harness Overhead time" in span_map:
+            res = "\tMLPerf Harness trace time\n"
+            res += "\t\tProcess time (avg): {}us\n".format(
+                span_map["Actual triton time"] / (cnt * 1000))
+            res += "\t\tHarness Overhead time (avg) : {}us\n".format(
+                span_map["Harness Overhead time"] / (cnt * 1000))
+            return res
+        else:
+            return None
+
+
 def summarize(frontend, traces):
     # map from (model_name, model_version) to # of traces
     model_count_map = dict()
@@ -286,3 +313,4 @@ if __name__ == '__main__':
         print("File: {}".format(f.name))
         summarize(HttpFrontend(), trace_data)
         summarize(GrpcFrontend(), trace_data)
+        summarize(MLPerfFrontend(), trace_data)
