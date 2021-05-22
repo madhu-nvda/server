@@ -817,6 +817,7 @@ InferenceRequest::Input::AppendDataForDevice(
   if (device_data == device_specific_data_.end()) {
     device_specific_data_.insert(std::make_pair(dev_info, new MemoryReference));
   }
+  device_data = device_specific_data_.find(dev_info);
   if (byte_size > 0) {
     std::static_pointer_cast<MemoryReference>(device_data->second)
         ->AddBuffer(
