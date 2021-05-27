@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2021, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,13 +24,25 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-replicaCount: 1
+import numpy as np
+import sys
 
-image:
-  imageName: nvcr.io/nvidia/tritonserver:21.05-py3
-  pullPolicy: IfNotPresent
-  modelRepositoryPath: gs://triton-inference-server-repository/model_repository
-  numGpus: 1
+sys.path.append('../../')
+import triton_python_backend_utils as pb_utils
 
-service:
-  type: LoadBalancer
+
+class TritonPythonModel:
+
+    def initialize(self, args):
+        self.model_config = args['model_config']
+        print(f'Python version is {sys.version_info.major}.{sys.version_info.minor} and NumPy version is {np.version.version}')
+
+    def execute(self, requests):
+        """ This function is called on inference request.
+        """
+        responses = []
+        for request in requests:
+            input_tensor = pb_utils.get_input_tensor_by_name(request, "INPUT0")
+            out_tensor = pb_utils.Tensor("OUTPUT0", input_tensor.as_numpy())
+            responses.append(pb_utils.InferenceResponse([out_tensor]))
+        return responses

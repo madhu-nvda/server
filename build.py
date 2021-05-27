@@ -64,7 +64,7 @@ from distutils.dir_util import copy_tree
 # incorrectly load the other version of the openvino libraries.
 #
 TRITON_VERSION_MAP = {
-    '2.11.0dev': ('21.06dev', '21.04', '1.7.1', '2021.2.200', '2021.2.200')
+    '2.11.0dev': ('21.06dev', '21.05', '1.7.1', '2021.2.200', '2021.2.200')
 }
 
 EXAMPLE_BACKENDS = ['identity', 'square', 'repeat']
@@ -489,7 +489,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # libcurl4-openSSL-dev is needed for GCS
 # python3-dev is needed by Torchvision
-# python3-pip is needed by python backend
+# python3-pip and libarchive-dev is needed by python backend
 # uuid-dev and pkg-config is needed for Azure Storage
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -513,14 +513,13 @@ RUN apt-get update && \
             unzip \
             wget \
             zlib1g-dev \
+            libarchive-dev \
             pkg-config \
             uuid-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# grpcio-tools grpcio-channelz are needed by python backend
 RUN pip3 install --upgrade pip && \
-    pip3 install --upgrade wheel setuptools docker && \
-    pip3 install grpcio-tools grpcio-channelz
+    pip3 install --upgrade wheel setuptools docker
 
 # Server build requires recent version of CMake (FetchContent required)
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | \
@@ -648,11 +647,11 @@ RUN apt-get update && \
 # python3, python3-pip and some pip installs required for the python backend
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-         python3 \
+         python3 libarchive-dev \
          python3-pip && \
     pip3 install --upgrade pip && \
     pip3 install --upgrade wheel setuptools && \
-    pip3 install --upgrade grpcio-tools grpcio-channelz numpy && \
+    pip3 install --upgrade numpy && \
     rm -rf /var/lib/apt/lists/*
 '''
     df += '''
@@ -1146,21 +1145,21 @@ if __name__ == '__main__':
         action='append',
         required=False,
         help=
-        'Include specified backend in build as <backend-name>[:<repo-tag>]. If <repo-tag> starts with "pull/" then it refers to a pull-request reference, otherwise <repo-tag> indicates the git tag/branch to use for the build. If the version is non-development then the default <repo-tag> is the release branch matching the container version (e.g. version 21.04 -> branch r21.04); otherwise the default <repo-tag> is "main" (e.g. version 21.04dev -> branch main).'
+        'Include specified backend in build as <backend-name>[:<repo-tag>]. If <repo-tag> starts with "pull/" then it refers to a pull-request reference, otherwise <repo-tag> indicates the git tag/branch to use for the build. If the version is non-development then the default <repo-tag> is the release branch matching the container version (e.g. version 21.05 -> branch r21.05); otherwise the default <repo-tag> is "main" (e.g. version 21.05dev -> branch main).'
     )
     parser.add_argument(
         '--repo-tag',
         action='append',
         required=False,
         help=
-        'The version of a component to use in the build as <component-name>:<repo-tag>. <component-name> can be "common", "core", "backend" or "thirdparty". If <repo-tag> starts with "pull/" then it refers to a pull-request reference, otherwise <repo-tag> indicates the git tag/branch. If the version is non-development then the default <repo-tag> is the release branch matching the container version (e.g. version 21.04 -> branch r21.04); otherwise the default <repo-tag> is "main" (e.g. version 21.04dev -> branch main).'
+        'The version of a component to use in the build as <component-name>:<repo-tag>. <component-name> can be "common", "core", "backend" or "thirdparty". If <repo-tag> starts with "pull/" then it refers to a pull-request reference, otherwise <repo-tag> indicates the git tag/branch. If the version is non-development then the default <repo-tag> is the release branch matching the container version (e.g. version 21.05 -> branch r21.05); otherwise the default <repo-tag> is "main" (e.g. version 21.05dev -> branch main).'
     )
     parser.add_argument(
         '--repoagent',
         action='append',
         required=False,
         help=
-        'Include specified repo agent in build as <repoagent-name>[:<repo-tag>]. If <repo-tag> starts with "pull/" then it refers to a pull-request reference, otherwise <repo-tag> indicates the git tag/branch to use for the build. If the version is non-development then the default <repo-tag> is the release branch matching the container version (e.g. version 21.04 -> branch r21.04); otherwise the default <repo-tag> is "main" (e.g. version 21.04dev -> branch main).'
+        'Include specified repo agent in build as <repoagent-name>[:<repo-tag>]. If <repo-tag> starts with "pull/" then it refers to a pull-request reference, otherwise <repo-tag> indicates the git tag/branch to use for the build. If the version is non-development then the default <repo-tag> is the release branch matching the container version (e.g. version 21.05 -> branch r21.05); otherwise the default <repo-tag> is "main" (e.g. version 21.05dev -> branch main).'
     )
 
     FLAGS = parser.parse_args()

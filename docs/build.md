@@ -63,13 +63,13 @@ build will be a Docker image called *tritonserver* that will contain
 the tritonserver executable in /opt/tritonserver/bin and the required
 shared libraries in /opt/tritonserver/lib. The backends built for
 Triton will be in /opt/tritonserver/backends (note that as of the
-21.04 release the TensorRT backend is still included in the core of
+21.05 release the TensorRT backend is still included in the core of
 Triton and so does not appear in /opt/tritonserver/backends).
 
 The first step for any build is to checkout the
 [triton-inference-server/server](https://github.com/triton-inference-server/server)
 repo branch for the release you are interested in building (or the
-master branch to build from the development branch). Then run build.py
+master/main branch to build from the development branch). Then run build.py
 as described below. The build.py script performs these steps when
 building with Docker.
 
@@ -101,8 +101,8 @@ $ ./build.py --cmake-dir=<path/to/repo>/build --build-dir=/tmp/citritonbuild --e
 If you are building on master/main branch then \<container tag\> will
 default to "main". If you are building on a release branch then
 \<container tag\> will default to the branch name. For example, if you
-are building on the r21.04 branch, \<container tag\> will default to
-r21.04. Therefore, you typically do not need to provide \<container
+are building on the r21.05 branch, \<container tag\> will default to
+r21.05. Therefore, you typically do not need to provide \<container
 tag\> at all (nor the preceding colon). You can use a different
 \<container tag\> for a component to instead use the corresponding
 branch/tag in the build. For example, if you have a branch called
@@ -129,7 +129,7 @@ without Docker.
 The first step for any build is to checkout the
 [triton-inference-server/server](https://github.com/triton-inference-server/server)
 repo branch for the release you are interested in building (or the
-master branch to build from the development branch). Then run build.py
+master/main branch to build from the development branch). Then run build.py
 as described below. The build.py script will perform the following
 steps (note that if you are building with Docker that these same steps
 will be performed during the Docker build within the
@@ -258,8 +258,8 @@ $ python build.py --cmake-dir=<path/to/repo>/build --build-dir=/tmp/citritonbuil
 If you are building on master/main branch then \<container tag\> will
 default to "main". If you are building on a release branch then
 \<container tag\> will default to the branch name. For example, if you
-are building on the r21.04 branch, \<container tag\> will default to
-r21.04. Therefore, you typically do not need to provide \<container
+are building on the r21.05 branch, \<container tag\> will default to
+r21.05. Therefore, you typically do not need to provide \<container
 tag\> at all (nor the preceding colon). You can use a different
 \<container tag\> for a component to instead use the corresponding
 branch/tag in the build. For example, if you have a branch called
